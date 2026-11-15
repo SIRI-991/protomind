@@ -22,17 +22,15 @@ async function scrapeLinkedIn() {
     console.log("🚀 Starting LinkedIn Scraper via Apify...");
     // Prepare Actor input (We use a popular LinkedIn scraper actor on Apify)
     const input = {
-        "urls": [
+        "companyUrls": [
             "https://www.linkedin.com/company/microsoft/" // Target to scrape
-        ],
-        "deepScrape": false,
-        "proxyConfiguration": { "useApifyProxy": true }
+        ]
     };
 
     try {
         // Run the Actor and wait for it to finish
         console.log("Running scraper... (This may take a few minutes depending on the target)");
-        const run = await client.actor("microworlds/linkedin-profile-scraper").call(input);
+        const run = await client.actor("johnvc/linkedin-company-api").call(input);
 
         // Fetch and print Actor results from the run's dataset
         console.log('✅ Scraping finished. Fetching dataset items...');
