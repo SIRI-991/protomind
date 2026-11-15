@@ -49,11 +49,10 @@ class LinkedinScraper {
     try {
       // Step 1: Trigger Apify Run
       const runRes = await axios.post(
-        'https://api.apify.com/v2/acts/apify~linkedin-posts-search/runs',
+        'https://api.apify.com/v2/acts/johnvc~linkedin-post-search-api/runs',
         {
-          keywords: selectedKeyword,
-          maxResults: 5,
-          proxy: { useApifyProxy: true }
+          keywords: [selectedKeyword],
+          maxPostsPerKeyword: 5
         },
         {
           headers: {
@@ -69,7 +68,7 @@ class LinkedinScraper {
       let status = "RUNNING";
       let attempts = 0;
       
-      while (status === "RUNNING" && attempts < 12) {
+      while ((status === "READY" || status === "RUNNING") && attempts < 12) {
         await new Promise(r => setTimeout(r, 5000)); // wait 5 seconds
         attempts++;
         
@@ -102,11 +101,11 @@ class LinkedinScraper {
         leads.push({
           username: item.authorName || item.profileUrl || "LinkedIn User",
           full_name: item.authorName || "",
-          profile_url: item.authorProfileUrl || item.profileUrl || "",
+          profile_url: item.authorUrl || item.authorProfileUrl || item.profileUrl || "",
           platform: "LinkedIn",
           post_content: content,
           post_url: item.postUrl || item.url || "",
-          post_date: new Date(item.postedAt || item.date || Date.now()),
+          post_date: new Date(item.datePosted || item.postedAt || item.date || Date.now()),
           source_keywords: [selectedKeyword]
         });
       }
